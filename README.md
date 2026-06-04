@@ -4,7 +4,7 @@
 )](./)
 [![Language](https://img.shields.io/badge/Language-orange)](./README.it.md)
 [![License: MIT](https://img.shields.io/badge/License%3A%20MIT-brightgreen
-])](https://opensource.org)
+)](https://opensource.org)
 
 
 https://img.shields.io/badge/any%20text-you%20like-blue
