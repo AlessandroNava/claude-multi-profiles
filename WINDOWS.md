@@ -4,6 +4,31 @@ This guide provides the necessary PowerShell scripts to configure multi-profile 
 
 ---
 
+## 🛠️ How to Run PowerShell Scripts (.ps1)
+
+By default, Windows 11 restricts execution of unverified scripts for security reasons. Follow these steps to run the automation files successfully:
+
+1. Close **VS Code** completely.
+2. Open **PowerShell** and navigate to the directory where your `.ps1` files are stored using the `cd` command (e.g., if they are in your Downloads folder):
+   ```powershell
+   cd \$HOME\Downloads
+   ```
+3. Temporarily unblock script execution for your current terminal session by running:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+   ```
+4. Execute the initialization script by typing its name preceded by `.\`:
+   ```powershell
+   .\init-claude-personal.ps1
+   ```
+5. Next, execute the profile manager setup script:
+   ```powershell
+   .\setup-claude-profiles.ps1
+   ```
+6. Restart your terminal to apply the changes.
+
+---
+
 ## 1. Step 1: Initialization and Data Migration
 *   **Filename:** `init-claude-personal.ps1`
 *   **Instructions:** Close **VS Code** completely. Open PowerShell in the directory where you saved this file and run it. 
