@@ -1,7 +1,7 @@
-# claude-multi-profiles
+# claude-multi-profiles (Italiano)
 
 [![Platform](https://shields.io)](./)
-[![Language](https://shields.io)](./README.it.md)
+[![Language](https://shields.io)](./README.md)
 [![License: MIT](https://shields.io)](https://opensource.org)
 
 > Script e documentazione per gestire e scambiare facilmente account multipli (Personal/Pro e Team/Work) in Claude Code su Windows, macOS e Linux.
