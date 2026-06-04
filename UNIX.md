@@ -4,6 +4,31 @@ This guide provides the shell scripts required to configure seamless profile swi
 
 ---
 
+## 🛠️ How to Run Shell Scripts (.sh)
+
+By default, newly created or downloaded `.sh` files lack execution permissions on Unix systems. Follow these steps to run them successfully:
+
+1. Close **VS Code** completely.
+2. Open your **Terminal** and navigate to the directory where your `.sh` files are stored using the `cd` command (e.g., your Downloads folder):
+   ```bash
+   cd \$HOME/Downloads
+   ```
+3. Grant execution permissions to both scripts using the `chmod` command:
+   ```bash
+   chmod +x init-claude-personal.sh setup-claude-profiles.sh
+   ```
+4. Execute the initialization script to migrate your files:
+   ```bash
+   ./init-claude-personal.sh
+   ```
+5. Next, run the profile manager configuration script to update your shell:
+   ```bash
+   ./setup-claude-profiles.sh
+   ```
+6. Reload your terminal settings or type `source ~/.zshrc` to activate the changes immediately.
+
+---
+
 ## 1. Step 1: Initialization and Data Migration
 *   **Filename:** `init-claude-personal.sh`
 *   **Instructions:** Close **VS Code** completely. Open your terminal, grant execution permissions to the script, and run it.
