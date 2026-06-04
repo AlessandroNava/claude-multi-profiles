@@ -6,9 +6,6 @@
 [![License: MIT](https://img.shields.io/badge/License%3A%20MIT-brightgreen
 )](https://opensource.org)
 
-
-https://img.shields.io/badge/any%20text-you%20like-blue
-
 > Scripts and documentation to seamlessly switch between multiple Claude Code accounts (Personal/Pro & Team/Work) on Windows, macOS, and Linux.
 
 🇮🇹 **Nota per gli utenti italiani:** È disponibile la documentazione completa in lingua italiana nel file [README.it.md](./README.it.md).
