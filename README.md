@@ -1,8 +1,12 @@
 # claude-multi-profiles
 
-[![Platform](https://badgen.net)](./)
-[![Language](https://badgen.net)](./README.it.md)
-[![License: MIT](https://badgen.net)](https://opensource.org)
+[![Platform](https://img.shields.io/badge/Platform)](./)
+[![Language](https://img.shields.io/badge/Language)](./README.it.md)
+[![License: MIT](https://img.shields.io/badge/License%3A%20MIT
+])](https://opensource.org)
+
+
+https://img.shields.io/badge/any%20text-you%20like-blue
 
 > Scripts and documentation to seamlessly switch between multiple Claude Code accounts (Personal/Pro & Team/Work) on Windows, macOS, and Linux.
 
