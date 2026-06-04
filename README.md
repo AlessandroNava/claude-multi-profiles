@@ -12,31 +12,6 @@
 
 ---
 
-## 🛠️ How to Run PowerShell Scripts (.ps1)
-
-By default, Windows 11 restricts execution of unverified scripts for security reasons. Follow these steps to run the automation files successfully:
-
-1. Close **VS Code** completely.
-2. Open **PowerShell** and navigate to the directory where your `.ps1` files are stored using the `cd` command (e.g., if they are in your Downloads folder):
-   ```powershell
-   cd \$HOME\Downloads
-   ```
-3. Temporarily unblock script execution for your current terminal session by running:
-   ```powershell
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-   ```
-4. Execute the initialization script by typing its name preceded by `.\`:
-   ```powershell
-   .\init-claude-personal.ps1
-   ```
-5. Next, execute the profile manager setup script:
-   ```powershell
-   .\setup-claude-profiles.ps1
-   ```
-6. Restart your terminal to apply the changes.
-
----
-
 ## 📐 1. How It Works (Architecture)
 
 Both the VS Code graphical extension and the official Claude Code CLI strictly look for specific fixed directories in your user home path (`~` or `%USERPROFILE%`). If you log in with a Team account, your existing Pro tokens and history are overwritten.
