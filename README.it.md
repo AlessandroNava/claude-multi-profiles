@@ -12,6 +12,31 @@
 
 ---
 
+## 🛠️ Come Eseguire gli Script PowerShell (.ps1)
+
+Per impostazione predefinita, Windows 11 blocca l'esecuzione di script non verificati per motivi di sicurezza. Segui questi passaggi per eseguire i file di automazione senza errori:
+
+1. Chiudi completamente **VS Code**.
+2. Apri **PowerShell** e spostati nella cartella in cui si trovano i file usando il comando `cd` (ad esempio se li hai scaricati nella cartella Download):
+   ```powershell
+   cd \$HOME\Downloads
+   ```
+3. Sblocca temporaneamente l'esecuzione degli script *solo per la sessione corrente del terminale* lanciando questo comando:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+   ```
+4. Esegui lo script di inizializzazione digitando il nome del file preceduto da `.\`:
+   ```powershell
+   .\init-claude-personal.ps1
+   ```
+5. Successivamente, esegui il secondo script per configurare i comandi permanenti:
+   ```powershell
+   .\setup-claude-profiles.ps1
+   ```
+6. Riavvia il terminale per rendere effettive le modifiche.
+
+---
+
 ## 📐 1. Logica di Funzionamento (Architettura)
 
 L'estensione grafica di VS Code e la CLI ufficiale di Claude Code puntano in modo rigido ad alcune directory fisse nella cartella dell'utente (`~` o `%USERPROFILE%`). Se si effettua il login con l'account Team, i token e la cronologia dell'account Pro vengono sovrascritti.
