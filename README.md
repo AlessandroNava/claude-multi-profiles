@@ -1,8 +1,9 @@
 # claude-multi-profiles
 
-[![Platform](https://img.shields.io/badge/Platform)](./)
-[![Language](https://img.shields.io/badge/Language)](./README.it.md)
-[![License: MIT](https://img.shields.io/badge/License%3A%20MIT
+[![Platform](https://img.shields.io/badge/Platform-8A2BE2
+)](./)
+[![Language](https://img.shields.io/badge/Language-orange)](./README.it.md)
+[![License: MIT](https://img.shields.io/badge/License%3A%20MIT-brightgreen
 ])](https://opensource.org)
 
 
