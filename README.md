@@ -77,6 +77,30 @@ Select the guide corresponding to your operating system to find the initializati
 
 ---
 
+## 🛠️ How to Run PowerShell Scripts (.ps1) on Windows 11
+
+By default, Windows blocks script execution for security reasons. Follow these steps to run the scripts successfully:
+
+1. Close **VS Code** completely.
+2. Open **PowerShell** and navigate to the folder where your scripts are saved using the `cd` command:
+   ```powershell
+   cd "C:\Path\To\Your\Folder"
+   ```
+3. Temporarily unblock script execution for your current terminal session by running:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+   ```
+4. Execute the initialization script by typing its name preceded by `.\`:
+   ```powershell
+   .\init-claude-personal.ps1
+   ```
+5. Next, execute the profile manager setup script:
+   ```powershell
+   .\setup-claude-profiles.ps1
+   ```
+6. Restart your terminal to apply the changes.
+
+
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
