@@ -2,7 +2,7 @@
 
 [![Platform](https://img.shields.io/badge/Platform-8A2BE2
 )](./)
-[![Language](https://img.shields.io/badge/Language%3A%20IT-orange)](./README.md)
+[![Language](https://img.shields.io/badge/Language%3A%20EN-orange)](./README.md)
 [![License: MIT](https://img.shields.io/badge/License%3A%20MIT-brightgreen
 )](https://opensource.org)
 
