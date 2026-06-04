@@ -4,6 +4,31 @@ Questa guida contiene gli script Bash/Zsh necessari per configurare lo switch de
 
 ---
 
+## 🛠️ Come Eseguire gli Script Shell (.sh)
+
+Sui sistemi Unix, per motivi di sicurezza, i file di script `.sh` appena creati o scaricati non hanno i permessi per essere avviati. Segui questi passaggi per abilitarli ed eseguirli:
+
+1. Chiudi completamente **VS Code**.
+2. Apri il **Terminale** e spostati nella cartella in cui si trovano i file usando il comando `cd` (ad esempio se li hai salvati nella cartella Download):
+   ```bash
+   cd \$HOME/Downloads
+   ```
+3. Concedi i permessi di esecuzione a entrambi i file lanciando il comando `chmod`:
+   ```bash
+   chmod +x init-claude-personal.sh setup-claude-profiles.sh
+   ```
+4. Esegui lo script di inizializzazione per migrare e rinominare le tue vecchie cartelle:
+   ```bash
+   ./init-claude-personal.sh
+   ```
+5. Successivamente, esegui il secondo script per inserire i comandi rapidi nel tuo profilo:
+   ```bash
+   ./setup-claude-profiles.sh
+   ```
+6. Ricarica la configurazione del terminale digitando `source ~/.zshrc` per rendere i comandi subito attivi.
+
+---
+
 ## 1. Passo 1: Inizializzazione e Migrazione
 *   **Nome File:** `init-claude-personal.sh`
 *   **Istruzioni:** Chiudi **VS Code**. Apri il terminale, rendi lo script eseguibile ed eseguilo.
