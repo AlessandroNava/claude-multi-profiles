@@ -62,10 +62,5 @@ claude-work
 
 ---
 
-## ⚠ 4. Upgrading from old Symlink version?
-Before using the new functions, make sure to safely delete any old link left by previous migrations:
-- **macOS/Linux:** `rm -f ~/.claude ~/.claude-mem ~/.claude-code-gui ~/.claude.json`
-- **Windows (Admin PowerShell):** `Remove-Item -Path "$HOME\.claude", "$HOME\.claude-mem", "$HOME\.claude-code-gui", "$HOME\.claude.json" -Force -ErrorAction SilentlyContinue`
-
 ## 📄 License
 This project is licensed under the MIT License.

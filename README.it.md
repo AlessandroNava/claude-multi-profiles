@@ -62,10 +62,5 @@ claude-work
 
 ---
 
-## ⚠ 4. Stai aggiornando dalla vecchia versione con i Symlink?
-Prima di lanciare le nuove funzioni, assicurati di rimuovere i vecchi collegamenti lasciati dalle precedenti configurazioni per evitare conflitti nel file system:
-- **macOS/Linux:** `rm -f ~/.claude ~/.claude-mem ~/.claude-code-gui ~/.claude.json`
-- **Windows (PowerShell come Amministratore):** `Remove-Item -Path "$HOME\.claude", "$HOME\.claude-mem", "$HOME\.claude-code-gui", "$HOME\.claude.json" -Force -ErrorAction SilentlyContinue`
-
 ## 📄 Licenza
 Questo progetto è distribuito sotto Licenza MIT.
