@@ -1,5 +1,5 @@
 @echo off
-title Avvio Migrazione Profili Claude
+title Spostamento verso Profilo WORK (Aziendale)
 
 :: Salva il percorso della cartella corrente prima dell'elevazione UAC
 set "SCRIPT_DIR=%~dp0"
@@ -7,14 +7,25 @@ set "SCRIPT_DIR=%~dp0"
 :: Verifica i privilegi di amministratore e li richiede se mancanti
 net session >nul 2>&1
 if %errorLevel% neq 0 (
-    echo Richiesta privilegi di amministratore in corso...
     powershell -Command "Start-Process -FilePath '%0' -Verb RunAs"
     exit /b
 )
 
-:: Forza Windows a tornare nella cartella corretta dopo l'elevazione
 cd /d "%SCRIPT_DIR%"
 
-:: Avvia lo script PowerShell usando il percorso assoluto salvato in precedenza
+echo [1/3] Salvataggio contesto corrente (Profilo PERSONAL)...
+:: Esegue Claude Code nel profilo personale per generare il file HANDOFF.md prima di chiudere
+call claude -c "Usa la skill handoff per salvare la sessione del profilo personale prima dello switch"
+
+echo [2/3] Chiusura forzata dei processi Claude...
+powershell -NoProfile -Command "Stop-Process -Name 'Claude', 'claude-code' -Force -ErrorAction SilentlyContinue"
+timeout /t 2 /nobreak >nul
+
+echo [3/3] Configurazione e switch verso le cartelle del profilo WORK...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%init-claude-profiles.ps1"
+
+echo ======================================================
+echo [✓] Passaggio a profilo WORK completato con successo!
+echo     Nel nuovo profilo, digita: "leggi HANDOFF.md"
+echo ======================================================
 pause

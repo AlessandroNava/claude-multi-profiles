@@ -1,95 +1,112 @@
 <#
 .SYNOPSIS
-    Script di ripristino per i profili Claude (Rollback Manuale con Conferma).
+    Script di ripristino e unificazione dei profili (Rimozione Estensione).
 
 .DESCRIPTION
-    Questo script esegue l'operazione inversa rispetto a init-claude-profiles.ps1.
-    Riporta i file dal profilo "-personal" al profilo standard originale e rimuove 
-    il profilo "-work" temporaneo. Richiede una conferma interattiva prima di procedere.
+    Questo script esegue il ripristino del sistema se si decide di non usare più 
+    l'estensione Claude Profile Switcher. Rileva se la cartella predefinita '.claude' 
+    è un collegamento simbolico (symlink) e la rimuove in sicurezza. Successivamente, 
+    riporta la cartella fisica '.claude-personal' al nome nativo originale '.claude' 
+    ed elimina il profilo '.claude-work' per ripulire il PC.
 
-.COME USARLO:
-    Esegui lo script digitando da PowerShell nella cartella del file: 
-    .\restore-claude-profiles.ps1
+.REQUISITI
+    - Windows PowerShell 5.1 o PowerShell 7+.
+    - Diritti di amministratore (gestiti tramite il file .cmd lanciatore).
 #>
 
 # ==========================================
 # CONFIGURAZIONE PARAMETRIZZATA
 # ==========================================
-$BaseDir   = $env:USERPROFILE
-$SuffixOld = ""                 # Profilo di partenza originale
-$SuffixP   = "-personal"        # Profilo da cui recuperare i dati
-$SuffixW   = "-work"            # Profilo da eliminare
-$LogFile   = "$env:USERPROFILE\Desktop\Claude_Migration_Log.txt"
+$BaseDir   = $env:USERPROFILE                                   # Percorso della cartella dell'utente corrente (es. C:\Users\nome)
+$SuffixP   = "-personal"                                        # Suffisso usato dall'estensione per il profilo personale
+$SuffixW   = "-work"                                            # Suffisso usato dall'estensione per il profilo di lavoro
+$LogFile   = "$env:USERPROFILE\Desktop\Claude_Migration_Log.txt" # Punta allo stesso file di log per mantenere la cronologia unita
 
-# Elenco delle risorse da ripristinare
-$Resources = @(
-    @{ Name = "Claude Core";     Old = "$BaseDir\.claude$SuffixP";     New = "$BaseDir\.claude$SuffixOld" },
-    @{ Name = "Claude Memory";   Old = "$BaseDir\.claude-mem$SuffixP"; New = "$BaseDir\.claude-mem$SuffixOld" },
-    @{ Name = "Claude Code GUI"; Old = "$BaseDir\.claude-code-gui$SuffixP"; New = "$BaseDir\.claude-code-gui$SuffixOld" },
-    @{ Name = "File MCP JSON";   Old = "$BaseDir\.claude$SuffixP.json"; New = "$BaseDir\.claude$SuffixOld.json" }
-)
+# Definizione dei percorsi delle cartelle coinvolte nel ripristino
+$OldDir    = "$BaseDir\.claude"                                 # Percorso standard nativo di Claude (dove l'estensione crea il symlink)
+$PersDir   = "$BaseDir\.claude$SuffixP"                         # Cartella fisica del profilo Personale
+$WorkDir   = "$BaseDir\.claude$SuffixW"                         # Cartella fisica del profilo Lavoro
 
-$WorkDir = "$BaseDir\.claude$SuffixW"
-
-# Helper interno per scrivere a schermo e nel file di log contemporaneamente
+# ==========================================
+# FUNZIONE DI LOGGING CENTRALIZZATA
+# ==========================================
 function Write-Log {
     param (
-        [string]$Message,
-        [System.ConsoleColor]$Color = "White"
+        [string]$Message,                                       # Il testo del messaggio da scrivere
+        [System.ConsoleColor]$Color = "White"                   # Il colore del testo nel terminale
     )
-    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Write-Host $Message -ForegroundColor $Color
-    "[ $Timestamp ] $Message" | Out-File -FilePath $LogFile -Append -Encoding utf8
+    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"         # Genera l'orario attuale dell'evento
+    Write-Host $Message -ForegroundColor $Color                 # Mostra il messaggio a schermo nel terminale
+    "[ $Timestamp ] $Message" | Out-File -FilePath $LogFile -Append -Encoding utf8 # Scrive la riga in modalità append nel log del Desktop
 }
 
 # ==========================================
-# RICHIESTA DI CONFERMA INTERATTIVA
+# SCHERMATA INIZIALE E CONFERMA UTENTE
 # ==========================================
-Clear-Host
-Write-Host "=== ATTENZIONE: RIPRISTINO CONFIGURAZIONE ORIGINALE ===" -ForegroundColor Yellow
-Write-Host "Questo script riporterà i profili Claude allo stato iniziale di partenza"
-Write-Host "e cancellerà l'attuale profilo Work ($WorkDir).`n"
+Clear-Host                                                      # Svuota lo schermo del terminale
+Write-Host "=== RIPRISTINO CONFIGURAZIONE ORIGINALE (RIMOZIONE ESTENSIONE) ===" -ForegroundColor Yellow
+Write-Host "Questo script rimuovera i collegamenti dell'estensione, ripristinando"
+Write-Host "il profilo Personal come cartella principale predefinita di Claude.`n"
 
-$Confirmation = Read-Host "Vuoi procedere con il rollback manuale? (S/N)"
+# Richiede una conferma esplicita prima di alterare o eliminare cartelle
+$Confirmation = Read-Host "Vuoi unificare i profili e tornare alla configurazione nativa? (S/N)"
 
-if ($Confirmation -notmatch "^[sS]$" -and $Confirmation -notmatch "^[yY]$") {
-    # Se l'utente preme N o qualsiasi altro tasto, interrompe l'esecuzione
-    Write-Log "[i] Operazione di ripristino annullata dall'utente." "Yellow"
-    Exit
+# Se l'utente non digita S o Y l'operazione viene interrotta istantaneamente
+if ($Confirmation -notmatch "^[sS]$" -and $Confirmation -notmatch "^[yY]$") { 
+    Write-Log "[i] Operazione di rollback manuale annullata dall'utente." "Yellow"
+    Exit 
 }
 
-# Apertura sessione di ripristino nel log dopo la conferma
-Write-Log "`n=== INIZIO RIPRISTINO MANUALE (ROLLBACK) ===" "Cyan"
+# Apre una nuova sezione dedicata al ripristino all'interno del file di log comune
+Write-Log "`n=== INIZIO RIPRISTINO MANUALE (DISINSTALLAZIONE ESTENSIONE) ===" "Cyan"
 
 # ==========================================
-# AVVIO OPERAZIONI DI RIPRISTINO
+# AVVIO OPERAZIONI DI RIPRISTINO E PULIZIA
 # ==========================================
 try {
-    # 1. Spostamento inverso dei dati da Personal a Profilo Standard
-    foreach ($Resource in $Resources) {
-        if (Test-Path $Resource.Old) {
-            if (!(Test-Path $Resource.New)) {
-                Move-Item -Path $Resource.Old -Destination $Resource.New -Force -ErrorAction Stop
-                Write-Log "[✓] Ripristinato: $($Resource.Name) allo stato iniziale di partenza." "Green"
-            } else {
-                Write-Log "[!] Impossibile ripristinare $($Resource.Name): il percorso originale '$($Resource.New)' esiste già." "Yellow"
-            }
+    # 1. RIMOZIONE DEL SYMLINK DELL'ESTENSIONE
+    if (Test-Path $OldDir) {
+        # Recupera le proprietà avanzate della cartella .claude principale
+        $Item = Get-Item $OldDir
+        
+        # Verifica se la cartella è un vero collegamento di tipo Symlink (ReparsePoint)
+        if ($Item.Attributes -match "ReparsePoint") {
+            # Elimina il collegamento virtuale (l'azione non cancella i file reali dentro i profili)
+            Remove-Item -Path $OldDir -Force -ErrorAction Stop
+            Write-Log "[✓] Rimosso con successo il collegamento simbolico virtuale creato dall'estensione." "Green"
         } else {
-            Write-Log "[i] Profilo personal non trovato per $($Resource.Name), ripristino non necessario." "Gray"
+            # Se è una cartella reale, blocca il ripristino per evitare la perdita accidentale di dati importanti
+            Write-Log "[!] Attenzione: '$OldDir' e una cartella fisica e non un collegamento. Ripristino interrotto per sicurezza." "Yellow"
+            Exit
         }
     }
 
-    # 2. Rimozione e pulizia della cartella Work generata in precedenza
-    if (Test-Path $WorkDir) {
-        Write-Log "[?] Rimozione del profilo Work temporaneo ($WorkDir)..." "Cyan"
-        Remove-Item -Path $WorkDir -Recurse -Force -ErrorAction Stop
-        Write-Log "[✓] Profilo Work eliminato con successo dal sistema." "Green"
+    # 2. RIPRISTINO DEL PROFILO PERSONALE COME CARTELLA NATIVA
+    if (Test-Path $PersDir) {
+        # Se il vecchio percorso è stato liberato correttamente dalla rimozione del symlink
+        if (!(Test-Path $OldDir)) {
+            # Rinomina/Sposta la cartella .claude-personal riportandola al nome standard .claude
+            Move-Item -Path $PersDir -Destination $OldDir -Force -ErrorAction Stop
+            Write-Log "[✓] Profilo Personal ripristinato come cartella fisica principale (.claude)." "Green"
+        } else {
+            Write-Log "[X] Errore: Il percorso di destinazione '$OldDir' risulta ancora occupato." "Red"
+        }
     } else {
-        Write-Log "[i] Nessuna cartella Work da rimuovere." "Gray"
+        Write-Log "[i] Cartella '$PersDir' non trovata. Impossibile ripristinare il profilo personale originario." "Gray"
     }
 
-    Write-Log "=== [COMPLETATO] Sistema riportato interamente allo stato originario. ===" "Green"
+    # 3. ELIMINAZIONE DEL PROFILO WORK
+    if (Test-Path $WorkDir) {
+        # Elimina in modo definitivo la cartella di lavoro speculare e tutto il suo contenuto
+        Remove-Item -Path $WorkDir -Recurse -Force -ErrorAction Stop
+        Write-Log "[✓] Cartella profilo Work ($WorkDir) eliminata e rimossa dal sistema." "Green"
+    } else {
+        Write-Log "[i] Nessuna cartella Work residua da rimuovere." "Gray"
+    }
+
+    Write-Log "=== [COMPLETATO] Sistema ripulito e riportato con successo allo stato nativo di Windows. ===" "Green"
 
 } catch {
-    Write-Log "[ERRORE CRITICO] Si è verificato un problema durante il ripristino manuale: $_" "Red"
+    # Registra nel log l'errore di sistema che ha bloccato il ripristino (es. cartella bloccata da un programma aperto)
+    Write-Log "[ERRORE CRITICO] Si e verificato un problema bloccante durante il ripristino: $_" "Red"
 }

@@ -1,66 +1,84 @@
-# claude-multi-profiles
+# Gestore Multi-Profilo Claude Code 🤖💼
 
-Script e documentazione per passare istantaneamente tra più account Claude Code (Personal/Pro e Team/Lavoro) su Windows, macOS e Linux senza conflitti di token o perdite di sessione.
-
----
-
-## 📐 1. Come Funziona
-
-Di default, la CLI ufficiale di Claude Code e l'estensione grafica di VS Code cercano cartelle fisse all'interno della tua directory utente per salvare i token di sessione, la cronologia e i server MCP.
-
-Invece di utilizzare instabili collegamenti simbolici (Symlink) che corrompono il Portachiavi del Sistema Operativo (OS Keychain) causando disconnessioni continue, questo progetto sfrutta la variabile d'ambiente nativa **`CLAUDE_CONFIG_DIR`**.
-
-### Architettura
-- **Profilo Personale / Pro (Default):** Condivide la cartella nativa `~/.claude`. Questo permette **sia al terminale che all'estensione grafica di VS Code** di condividere nativamente il tuo login Pro personale, le memorie e la cronologia privata.
-- **Profilo di Lavoro / Team (Isolato):** Viene deviato su una directory isolata (`~/.claude-work`). Isola completamente i tuoi token aziendali, i log delle chat dei clienti e i server MCP di lavoro all'interno del terminale.
+Questo ecosistema di script permette di sdoppiare l'ambiente di Claude Code in due profili indipendenti (**Personal** e **Work**), integrandosi con l'estensione *Claude Profile Switcher* e automatizzando il salvataggio delle sessioni tramite la skill `handoff`.
 
 ---
 
-## 🚀 2. Flusso di Lavoro Giornaliero
+## 💻 Ambiente: WINDOWS
 
-Una volta configurato, usa le funzioni dedicate nei tuoi terminali in base al contesto del progetto attuale:
+### Requisiti
+* Windows PowerShell 5.1 o superiore (o PowerShell 7+).
+* Diritti di Amministratore (richiesti automaticamente dai file `.cmd`).
 
-### 👤 Scenario A: Progetti Personali / Sviluppo Privato (Pro)
-Apri il tuo terminale e digita:
-```bash
-claude-personal
-```
-- **Cosa succede:** La variabile d'ambiente viene azzerata, ripristinando il comportamento standard. **Sia il terminale che il pannello dell'estensione grafica di VS Code** punteranno all'istante al tuo login personale Pro e alla tua cronologia privata.
+### File inclusi per Windows
+* `init-claude-profiles.ps1` — Logica di sdoppiamento cartelle.
+* `restore-claude-profiles.ps1` — Logica di ripristino del sistema.
+* `start-claude-migration.cmd` — Avvia lo switch da Personal a Work con Handoff automatico.
+* `start-claude-restore.cmd` — Avvia il ripristino da Work a Personal con Handoff automatico.
+* `make-shortcut.cmd` — Genera le icone di avvio rapido sul Desktop.
 
-### 🏢 Scenario B: Progetti Aziendali / Codice Clienti (Team)
-Apri il tuo terminale e digita:
-```bash
-claude-work
-```
-- **Cosa succede:** La CLI devia la cartella di configurazione su `~/.claude-work`. I tuoi token aziendali e le sessioni del team rimangono blindati nel loro ambiente isolato.
-- *Nota:* In questa modalità, interagisci con Claude esclusivamente tramite terminale (o il terminale integrato di VS Code). Evita di aprire il pannello visivo dell'estensione di VS Code per evitare sovrapposizioni tra l'account aziendale e quello personale.
+### Operazioni da fare (Windows)
+1. Inserisci tutti i file forniti all'interno di una cartella dedicata (es. `C:\Users\tuo_utente\Scripts\claude-profiles`).
+2. Fai doppio clic su **`make-shortcut.cmd`**: questo creerà due icone sul tuo Desktop pronte all'uso.
+3. Chiudi VS Code, Cursor e qualsiasi terminale attivo.
+4. Per passare al profilo aziendale, fai doppio clic su **`Claude - Avvia Migrazione`** sul Desktop. Lo script:
+   - Salverà il contesto corrente in `HANDOFF.md`.
+   - Chiuderà i processi bloccanti.
+   - Creerà e sincronizzerà le cartelle dei profili.
+5. Apri l'estensione *Claude Profile Switcher* su VS Code e imposta i percorsi per `.claude-personal` e `.claude-work`.
+6. Nella nuova sessione del profilo Work, digita in chat `leggi HANDOFF.md` per riprendere il lavoro da dove lo avevi interrotto.
 
 ---
 
-## 🛠 3. Guida all'Installazione
+## 🍎 / 🐧 Ambiente: UNIX (macOS / Linux)
 
-###  macOS & Linux (Bash/Zsh)
-1. Scarica il file `claude-profiles.sh` da questo repository e salvalo in una cartella sicura (es. la tua home).
-2. Apri il file di configurazione della tua shell (`~/.zshrc` oppure `~/.bashrc`) con un editor di testo.
-3. Aggiungi la seguente riga in fondo al file per caricare automaticamente i profili:
+### Requisiti
+* Shell Bash (predefinita su Linux e disponibile su macOS).
+* Permessi di esecuzione sui file `.sh`.
+
+### File inclusi per Unix
+* `init-claude-profiles.sh` — Logica Unix di sdoppiamento cartelle.
+* `restore-claude-profiles.sh` — Logica Unix di ripristino del sistema.
+* `start-claude-migration.sh` — Avvia lo switch Unix con Handoff automatico.
+* `start-claude-restore.sh` — Avvia il ripristino Unix con Handoff automatico.
+
+### Operazioni da fare (Unix / macOS / Linux)
+1. Salva i file `.sh` in una cartella a tua scelta (es. `~/claude-profiles`).
+2. Apri il terminale del tuo Mac o Linux e spostati nella cartella in cui hai salvato i file:
    ```bash
-   source ~/claude-profiles.sh
+   cd ~/claude-profiles
    ```
-4. Riavvia il terminale (`source ~/.zshrc`) e usa i comandi.
-
-### 🪟 Windows (PowerShell)
-1. Scarica il file `claude-profiles.ps1` da questo repository e salvalo in una cartella permanente.
-2. Apri il profilo di PowerShell eseguendo questo comando nel terminale:
-   ```powershell
-   notepad \$PROFILE
+3. **Abilita i permessi di esecuzione** per tutti gli script digitando:
+   ```bash
+   chmod +x *.sh
    ```
-3. Incolla la seguente riga in fondo allo script per caricare automaticamente le funzioni (fai attenzione a includere il punto iniziale e lo spazio):
-   ```powershell
-   . C:\percorso\della\tua\cartella\claude-profiles.ps1
+4. Per migrare al profilo Work, esegui il file di lancio digitando:
+   ```bash
+   ./start-claude-migration.sh
    ```
-4. Riavvia la console di PowerShell e testa i comandi.
+5. Lo script salverà automaticamente lo stato corrente del terminale in `HANDOFF.md`, arresterà le istanze di Claude e preparerà i percorsi fisici in `~/.claude-personal` e `~/.claude-work`.
+6. Apri il nuovo profilo e digita in chat `/compact` o `leggi HANDOFF.md` per ripristinare la sessione precedente.
 
 ---
+## ⚙️ Personalizzazione dei Suffissi delle Cartelle
 
-## 📄 Licenza
-Questo progetto è distribuito sotto Licenza MIT.
+Se desideri cambiare il nome delle cartelle generate sul computer (ad esempio, utilizzare `-private` al posto di `-personal` o `-azienda` al posto di `-work`), ti basta modificare una sola riga all'inizio degli script principali.
+
+### Su Windows (In `init-claude-profiles.ps1` e `restore-claude-profiles.ps1`)
+Apri i file `.ps1` con un editor di testo e individua la sezione `CONFIGURAZIONE PARAMETRIZZATA`. Modifica i valori tra virgolette:
+```powershell
+\$SuffixP   = "-private"   # Cambia il nome del profilo Personale
+\$SuffixW   = "-azienda"   # Cambia il nome del profilo Lavoro
+```
+
+### Su Unix / macOS / Linux (In `init-claude-profiles.sh` e `restore-claude-profiles.sh`)
+Apri i file `.sh` e modifica le variabili corrispondenti nella parte alta del codice:
+```bash
+SUFFIX_P="-private"       # Cambia il nome del profilo Personale
+SUFFIX_W="-azienda"       # Cambia il nome del profilo Lavoro
+```
+
+*Nota: Se modifichi i suffissi a migrazione già avvenuta, ricordati di aggiornare anche i percorsi all'interno delle impostazioni dell'estensione "Claude Profile Switcher" su VS Code/Cursor.*
+
+## 🪵 Registro dei Log e Diagnostica
+Entrambi gli ambienti generano e aggiornano un file di testo condiviso sul tuo Desktop chiamato **`Claude_Migration_Log.txt`**. All'interno troverai la cronologia con timestamp di ogni operazione eseguita, inclusi i successi di copia della skill di handoff ed eventuali errori di file bloccati.

@@ -1,66 +1,134 @@
-# claude-multi-profiles
+\# Claude Code Multi-Profile Manager 🤖💼
 
-Scripts and documentation to seamlessly switch between multiple Claude Code accounts (Personal/Pro & Team/Work) on Windows, macOS, and Linux without token or session conflicts.
 
-🇮🇹 **Nota per gli utenti italiani:** È disponibile la documentazione completa in lingua italiana nel file README.it.md.
 
-## 📐 1. How It Works
+An automated ecosystem to split, manage, and seamlessly switch between \*\*Personal\*\* and \*\*Work\*\* profiles in Anthropic's Claude Code, keeping your chat contexts alive.
 
-By default, the official Claude Code CLI and the VS Code graphical extension look for fixed directories in your user home path to store session tokens, history, and MCP configurations. 
 
-Instead of using unstable symbolic links that corrupt the OS Keychain and cause frequent logouts, this project leverages the native environment variable **`CLAUDE_CONFIG_DIR`**.
 
-### Architecture
-- **Personal / Pro Profile (Default):** Shares the native `~/.claude` folder. This allows **both your terminal and the VS Code graphical extension** to share your private Pro login, memories, and settings natively.
-- **Work / Team Profile (Isolated):** Diverted into an isolated directory (`~/.claude-work`). This sandboxes your corporate tokens, client chat logs, and business MCP servers entirely inside the terminal environment.
+Un ecosistema automatizzato per sdoppiare, gestire e scambiare i profili \*\*Personal\*\* (Personale) e \*\*Work\*\* (Lavoro) in Claude Code di Anthropic, mantenendo vivo il contesto delle tue chat.
 
----
 
-## 🚀 2. Daily Workflow
 
-Once configured, use the dedicated functions depending on your current project context:
+\---
 
-### 👤 Scenario A: Personal Projects / Private Development (Pro)
-Open your terminal and type:
-```bash
-claude-personal
+
+
+\## 📖 Documentation / Documentazione
+
+
+
+Please select your preferred language for full setup instructions, architecture breakdown, and OS configurations:
+
+
+
+Seleziona la tua lingua preferita per leggere le istruzioni di configurazione complete, i dettagli sull'architettura e le configurazioni per i vari sistemi operativi:
+
+
+
+\*   🌐 \*\*English (International):\*\* \[README.en.md](README.en.md)
+
+\*   🇮🇹 \*\*Italiano (Nazionale):\*\* \[README.it.md](README.it.md)
+
+
+
+\---
+
+
+
+\## 💡 What does this project solve? / Cosa risolve questo progetto?
+
+
+
+\### 1. Account Isolation / Isolamento degli Account
+
+Prevents mixing corporate codebases and official API usage with personal coding accounts, maintaining compliance and clean security boundaries.
+
+\*Evita di mischiare basi di codice aziendali e l'uso di API ufficiali con i tuoi account di programmazione personali, mantenendo la conformità e confini di sicurezza puliti.\*
+
+
+
+\### 2. The Context Loss Problem / Il Problema della Perdita del Contesto
+
+Normally, shifting profiles triggers a token reset, causing Claude to lose track of ongoing tasks. This manager automates an \*\*Agent Skill Handoff\*\* to compress your workspace state (`HANDOFF.md`) before killing any active window.
+
+\*Normalmente, cambiare profilo causa un reset dei token, facendo perdere a Claude la memoria delle attività in corso. Questo gestore automatizza un \*\*Handoff tramite Agent Skill\*\* per comprimere lo stato del tuo spazio di lavoro (`HANDOFF.md`) prima di chiudere la sessione attiva.\*
+
+
+
+\### 3. Native Integration / Integrazione Nativa
+
+Works out-of-the-box in harmony with the \*\*Claude Profile Switcher\*\* extension for VS Code and Cursor, resolving annoying file-system symlink lock errors (`EEXIST`).
+
+\*Funziona istantaneamente in armonia con l'estensione \*\*Claude Profile Switcher\*\* per VS Code e Cursor, risolvendo i fastidiosi errori di blocco dei collegamenti simbolici (`EEXIST`) del file system.\*
+
+
+
+\---
+
+
+
+\## 🛠️ Supported Environments / Ambienti Supportati
+
+
+
+This toolkit includes tailored native scripts for maximum automation across all development platforms:
+
+\*Questo toolkit include script nativi su misura per la massima automazione su tutte le piattaforme di sviluppo:\*
+
+
+
+\*   💻 \*\*Windows:\*\* Powered by PowerShell (`.ps1`) and specialized admin-elevated Command scripts (`.cmd`) with desktop short-cutting capabilities.
+
+\*   🍎 \*\*macOS \& 🐧 Linux:\*\* Driven by POSIX-compliant Bash scripts (`.sh`) optimized for Unix directory permissions.
+
+
+
+\---
+
+
+
+\## 📂 Project Structure / Struttura del Progetto
+
+
+
+```text
+
+📁 claude-multi-profiles/
+
+├── 📄 README.md                 <-- You are here (Intro)
+
+├── 📄 README.it.md              <-- Full Italian Guide
+
+├── 📄 README.en.md              <-- Full English Guide
+
+│
+
+├── 🌐 Windows (PC) Scripts:
+
+│   ├── 📄 init-claude-profiles.ps1
+
+│   ├── 📄 restore-claude-profiles.ps1
+
+│   ├── ⚙️ start-claude-migration.cmd
+
+│   ├── ⚙️ start-claude-restore.cmd
+
+│   └── ⚙️ make-shortcut.cmd
+
+│
+
+└── 🍎/🐧 Unix Scripts:
+
+&#x20;   ├── 📄 init-claude-profiles.sh
+
+&#x20;   ├── 📄 restore-claude-profiles.sh
+
+&#x20;   ├── 📄 start-claude-migration.sh
+
+&#x20;   └── 📄 start-claude-restore.sh
+
 ```
-- **What happens:** The environment variable is cleared, restoring the default system behavior. **Both your terminal and your VS Code graphical extension panel** will instantly target your personal Pro login and private history.
 
-### 🏢 Scenario B: Corporate Projects / Client Code (Team)
-Open your terminal and type:
-```bash
-claude-work
-```
-- **What happens:** The CLI diverts its configuration folder to `~/.claude-work`. Your corporate tokens and work sessions are kept entirely separated.
-- *Note:* In this mode, interact with Claude strictly via the terminal (or the integrated terminal inside VS Code). Avoid opening the VS Code graphical panel to prevent corporate/personal account overlaps.
 
----
 
-## 🛠 3. Setup Guides
-
-###  macOS & Linux (Bash/Zsh)
-1. Download the `claude-profiles.sh` file from this repository and save it in a safe place (e.g., your home directory).
-2. Open your shell configuration file (`~/.zshrc` or `~/.bashrc`) with a text editor.
-3. Add the following line at the end of the file to auto-load the profiles:
-   ```bash
-   source ~/claude-profiles.sh
-   ```
-4. Reload your terminal (`source ~/.zshrc`) and you are ready to use the commands.
-
-### 🪟 Windows (PowerShell)
-1. Download the `claude-profiles.ps1` file from this repository and save it in a permanent folder.
-2. Open your PowerShell profile by running this command in your terminal:
-   ```powershell
-   notepad \$PROFILE
-   ```
-3. Paste the following line at the bottom of the script to automatically load the functions (include the leading dot and space):
-   ```powershell
-   . C:\(\path\to\your\folder\claude-\)profiles.ps1
-   ```
-4. Restart your PowerShell console and test the commands.
-
----
-
-## 📄 License
-This project is licensed under the MIT License.
